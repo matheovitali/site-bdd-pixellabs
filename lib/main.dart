@@ -1,10 +1,14 @@
 import 'dart:html';
-import 'package:mongo_dart/mongo_dart.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
-void main() {
-  var db = Db(
-      "mongodb://matheo:qbj5ApsM9F4NAD3a@node1-53b642b201559571.database.cloud.ovh.net,node2-53b642b201559571.database.cloud.ovh.net,node3-53b642b201559571.database.cloud.ovh.net/admin?replicaSet=replicaset&tls=true");
+void main() async {
+  final db = await Db.create(
+      'mongodb://matheo:qbj5ApsM9F4NAD3a@node1-53b642b201559571.database.cloud.ovh.net,node2-53b642b201559571.database.cloud.ovh.net,node3-53b642b201559571.database.cloud.ovh.net/admin?replicaSet=replicaset&tls=true');
+  await db.open(secure: false, tlsAllowInvalidCertificates: true);
+  final coll = db.collection('AFDAS');
+  print(coll.find().toList());
   runApp(MyApp());
 }
 
