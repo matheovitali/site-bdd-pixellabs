@@ -8,7 +8,7 @@ void main() {
   print('debut');
   http
       .get(Uri.parse(
-          'https://cloud.mongodb.com/api/atlas/v1.0/groups/6179422dfb302f696320988f/dataLakes?pretty=true'))
+          'https://cloud.mongodb.com/api/atlas/v1.0/groups/6179422dfb302f696320988f/dataLakes'))
       .then((response) {
     print(json.decode(response.body));
     print('fin');
