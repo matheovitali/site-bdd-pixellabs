@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:open_file/open_file.dart';
@@ -411,15 +413,100 @@ class _PageOPCOState extends State<PageOPCO> {
   }
 }
 
-void ajouterUneOpco(String dataString) {
-  CollectionReference data = FirebaseFirestore.instance.collection('Data');
-  dataString = dataString + ",'Oulala':''";
+Map<String, dynamic> getOpcoLineForData(
+    String dataString, Map<String, dynamic> resultat) {
+  dataString =
+      dataString.replaceRange(dataString.length - 1, dataString.length, ',');
+  int info1 = 1;
+  int info2 = 1;
+  int nom1 = 1;
+  int nom2 = 1;
+  for (int x = 1; x + 1 < dataString.length;) {
+    for (; dataString[x] != ':';) x++;
+    nom2 = x;
+    info1 = x + 2;
+    for (; dataString[x] != ',';) x++;
+    info2 = x;
+    resultat["${dataString.substring(nom1, nom2)}"] =
+        "${dataString.substring(info1, info2)}";
+    nom1 = x + 2;
+  }
+  return resultat;
+}
+
+List<String> listDesOpco(String dataString) {
   print(dataString);
+  dataString =
+      dataString.replaceRange(dataString.length - 1, dataString.length, ',');
+  List<String> list = [];
+  int info1 = 1;
+  int info2 = 1;
+  int nom1 = 1;
+  int nom2 = 1;
+  for (int x = 1; x + 1 < dataString.length;) {
+    for (; dataString[x] != ':';) x++;
+    nom2 = x;
+    info1 = x + 2;
+    for (; dataString[x] != ',';) x++;
+    info2 = x;
+    list.add(
+        "${dataString.substring(nom1, nom2)}|${dataString.substring(info1, info2)}");
+    nom1 = x + 2;
+  }
+  return list;
+}
+
+void suprimerUneOpco(String dataString, int opcoToSuppr) {
+  print("suppression");
+  Map<String, dynamic> resultat = {};
+  CollectionReference data = FirebaseFirestore.instance.collection('Data');
+  dataString =
+      dataString.replaceRange(dataString.length - 1, dataString.length, ',');
+  int x = 1;
+  print(dataString);
+  for (int nbrVirgule = 0; nbrVirgule <= opcoToSuppr; x++) {
+    if (dataString[x] == ',') nbrVirgule++;
+    if (nbrVirgule == opcoToSuppr) {
+      if (opcoToSuppr == 0) {
+        if (','.allMatches(dataString).length - 1 != 0) {
+          dataString = dataString.replaceRange(
+              x, dataString.indexOf(',', x + 1) + 2, "");
+        } else {
+          dataString =
+              dataString.replaceRange(x, dataString.indexOf(',', x + 1), "");
+        }
+      } else {
+        dataString =
+            dataString.replaceRange(x, dataString.indexOf(',', x + 1), "");
+      }
+      nbrVirgule++;
+    }
+  }
+  dataString =
+      dataString.replaceRange(dataString.length - 1, dataString.length, '}');
+  print(dataString);
+  resultat = getOpcoLineForData(dataString, resultat);
   data
       .doc('OPCOS')
-      .set({'$dataString'})
+      .set(resultat)
+      .then((value) => print("opco suprimée !"))
+      .catchError((error) => print("L'ajout de l'opco à échouée !"));
+}
+
+void ajouterUneOpco(String dataString, String opcoToAdd, String siteWebOpco,
+    String contactOpco) async {
+  Map<String, dynamic> resultat = {};
+  CollectionReference data = FirebaseFirestore.instance.collection('Data');
+  if (dataString.length > 2) {
+    resultat = getOpcoLineForData(dataString, resultat);
+  }
+  resultat[opcoToAdd] = "$siteWebOpco|$contactOpco";
+  data
+      .doc('OPCOS')
+      .set(resultat)
       .then((value) => print("opco ajoutée !"))
       .catchError((error) => print("L'ajout de l'opco à échouée !"));
+  sleep(const Duration(seconds: 2));
 }
 
 class ListeOpco extends StatefulWidget {
@@ -428,54 +515,330 @@ class ListeOpco extends StatefulWidget {
 }
 
 class _ListeOpcoState extends State<ListeOpco> {
+  int error = 0;
+  int popUpAjoutOpco = 0;
+  String nomOpco = "";
+  String siteWebOpco = "";
+  String contactOpco = "";
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: getDocumentFromFirestore(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          List<String> liste = listDesOpco(snapshot.data.toString());
           return Scaffold(
+            backgroundColor: Color(0xFF1D2228),
+            appBar: AppBar(
               backgroundColor: Color(0xFF1D2228),
-              appBar: AppBar(
-                backgroundColor: Color(0xFF1D2228),
-                centerTitle: true,
-                title: Text(
-                  'Liste des opcos',
-                  style: TextStyle(fontSize: 30),
-                ),
+              centerTitle: true,
+              title: Text(
+                'Liste des opcos',
+                style: TextStyle(fontSize: 30),
               ),
-              body: Row(children: [
-                Text(
-                  snapshot.data.toString(),
-                  style: TextStyle(fontSize: 50, color: Colors.white),
-                ),
-                Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 5, color: Colors.grey),
-                      color: Color(0xFF1D2228),
-                    ),
-                    height: 70,
-                    width: 550,
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          ajouterUneOpco(snapshot.data.toString());
-                        });
-                      },
+            ),
+            body: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Column(mainAxisSize: MainAxisSize.max, children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
                       child: Container(
-                        color: Colors.white,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Ajouter une opco",
-                                style: TextStyle(
-                                    fontSize: 30, fontWeight: FontWeight.w900),
-                              )
-                            ]),
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 5, color: Colors.grey),
+                            color: Color(0xFF1D2228),
+                          ),
+                          height: 40,
+                          width: 200,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {});
+                            },
+                            child: Container(
+                              color: Colors.white,
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Recharger la page",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w900),
+                                    )
+                                  ]),
+                            ),
+                          )),
+                    ),
+                    Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 5, color: Colors.grey),
+                          color: Color(0xFF1D2228),
+                        ),
+                        height: 70,
+                        width: 550,
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              if (popUpAjoutOpco == 0)
+                                popUpAjoutOpco = 1;
+                              else
+                                popUpAjoutOpco = 0;
+                            });
+                          },
+                          child: Container(
+                            color: Colors.white,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Ajouter un opco",
+                                    style: TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.w900),
+                                  )
+                                ]),
+                          ),
+                        )),
+                    Expanded(
+                      child: Container(
+                        width: 1000,
+                        child: ListView.builder(
+                          itemCount: liste.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      border: Border.all(
+                                          width: 5, color: Colors.white)),
+                                  child: Column(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          liste[index].substring(
+                                              0, liste[index].indexOf('|')),
+                                          style: TextStyle(
+                                              color: Color(0xFFFB8122),
+                                              fontSize: 50,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Text(
+                                                'Site web',
+                                                style: TextStyle(
+                                                  color: Color(0xFFFB8122),
+                                                  fontSize: 30,
+                                                ),
+                                              ),
+                                              Text(
+                                                liste[index].substring(
+                                                    liste[index].indexOf('|') +
+                                                        1,
+                                                    liste[index]
+                                                        .lastIndexOf('|')),
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 25),
+                                              )
+                                            ],
+                                          ),
+                                          Column(
+                                            children: [
+                                              Text(
+                                                'Contact',
+                                                style: TextStyle(
+                                                    color: Color(0xFFFB8122),
+                                                    fontSize: 30),
+                                              ),
+                                              Text(
+                                                  liste[index].substring(
+                                                      liste[index].lastIndexOf(
+                                                              '|') +
+                                                          1,
+                                                      liste[index].length),
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 25))
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 15, bottom: 15),
+                                        child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                primary: Colors.redAccent),
+                                            onPressed: () {
+                                              setState(() {
+                                                suprimerUneOpco(
+                                                    snapshot.data.toString(),
+                                                    index);
+                                              });
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 5, bottom: 5),
+                                              child: Text(
+                                                "Supprimer",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                            )),
+                                      ),
+                                    ],
+                                  )),
+                            );
+                          },
+                        ),
                       ),
-                    )),
-              ]));
+                    ),
+                  ]),
+                ),
+                if (popUpAjoutOpco == 1)
+                  SingleChildScrollView(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                      child: Center(
+                        child: Container(
+                            width: 500,
+                            height: 700,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[350],
+                            ),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 15),
+                                  child: Text(
+                                    "Formulaire d'ajout d'une opco",
+                                    style: TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.w900),
+                                  ),
+                                ),
+                                Padding(
+                                    padding: EdgeInsets.only(top: 50),
+                                    child: Text(
+                                      "Nom de l'opco",
+                                      style: TextStyle(fontSize: 25),
+                                    )),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 5),
+                                  child: Container(
+                                    width: 400,
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                                          helperText: "Ne peut pas être null",
+                                          focusColor: Colors.black,
+                                          filled: true,
+                                          fillColor: Colors.white,
+                                          border: OutlineInputBorder(),
+                                          hintText: "Entrez le nom de l'opco"),
+                                      onChanged: (text) {
+                                        nomOpco = text;
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                    padding: EdgeInsets.only(top: 40),
+                                    child: Text(
+                                      "Site web de l'opco",
+                                      style: TextStyle(fontSize: 25),
+                                    )),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 5),
+                                  child: Container(
+                                    width: 400,
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                                          focusColor: Colors.black,
+                                          filled: true,
+                                          fillColor: Colors.white,
+                                          border: OutlineInputBorder(),
+                                          hintText:
+                                              "Entrez le site web de l'opco"),
+                                      onChanged: (text) {
+                                        siteWebOpco = text;
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                    padding: EdgeInsets.only(top: 60),
+                                    child: Text(
+                                      "Contact de l'opco",
+                                      style: TextStyle(fontSize: 25),
+                                    )),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 5),
+                                  child: Container(
+                                    width: 400,
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                                          focusColor: Colors.black,
+                                          filled: true,
+                                          fillColor: Colors.white,
+                                          border: OutlineInputBorder(),
+                                          hintText:
+                                              "Entrez les contacts de l'opco"),
+                                      onChanged: (text) {
+                                        contactOpco = text;
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 80),
+                                  child: InkWell(
+                                    child: Container(
+                                      width: 400,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(width: 10)),
+                                      child: Center(
+                                          child: Text(
+                                        'Valider',
+                                        style: TextStyle(fontSize: 50),
+                                      )),
+                                    ),
+                                    onTap: () {
+                                      if (nomOpco.isNotEmpty == true) {
+                                        error = 0;
+                                        setState(() {
+                                          popUpAjoutOpco = 0;
+                                          ajouterUneOpco(
+                                              snapshot.data.toString(),
+                                              nomOpco,
+                                              siteWebOpco,
+                                              contactOpco);
+                                        });
+                                      }
+                                    },
+                                  ),
+                                )
+                              ],
+                            )),
+                      ),
+                    ),
+                  )
+              ],
+            ),
+          );
         } else {
           return Scaffold(
               backgroundColor: Color(0xFF1D2228),
@@ -487,12 +850,18 @@ class _ListeOpcoState extends State<ListeOpco> {
                   style: TextStyle(fontSize: 30),
                 ),
               ),
-              body: Row(children: [
-                Text(
-                  'Chargement',
-                  style: TextStyle(fontSize: 50, color: Colors.white),
-                ),
-              ]));
+              body: Align(
+                alignment: Alignment.center,
+                child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Chargement',
+                        style: TextStyle(fontSize: 50, color: Colors.white),
+                      ),
+                    ]),
+              ));
         }
       },
     );
