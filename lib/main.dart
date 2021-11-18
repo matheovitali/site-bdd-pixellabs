@@ -65,12 +65,22 @@ void extraireData(String dataString, String fileName) async {
       }
     }
   }
-  print('fini');
 }
 
 Future<String> getDocumentFromFirestore() async {
   DocumentSnapshot snapshot =
       await FirebaseFirestore.instance.collection('Data').doc('OPCOS').get();
+  QuerySnapshot query =
+      await FirebaseFirestore.instance.collection('Data').get();
+  List names = [];
+  var meta = query.docs.forEach((doc) {
+    names.add(doc.id);
+  });
+  for (int i = 0; i != names.length; i++) {
+    print(names[i]);
+  }
+  var dataCollection = query.docs.asMap()[1]?.data() as Map;
+  print(dataCollection.toString());
   var data = snapshot.data() as Map;
   return data.toString();
 }
@@ -435,7 +445,7 @@ Map<String, dynamic> getOpcoLineForData(
 }
 
 List<String> listDesOpco(String dataString) {
-  print(dataString);
+  // print(dataString);
   dataString =
       dataString.replaceRange(dataString.length - 1, dataString.length, ',');
   List<String> list = [];
@@ -457,13 +467,11 @@ List<String> listDesOpco(String dataString) {
 }
 
 void suprimerUneOpco(String dataString, int opcoToSuppr) {
-  print("suppression");
   Map<String, dynamic> resultat = {};
   CollectionReference data = FirebaseFirestore.instance.collection('Data');
   dataString =
       dataString.replaceRange(dataString.length - 1, dataString.length, ',');
   int x = 1;
-  print(dataString);
   for (int nbrVirgule = 0; nbrVirgule <= opcoToSuppr; x++) {
     if (dataString[x] == ',') nbrVirgule++;
     if (nbrVirgule == opcoToSuppr) {
@@ -484,7 +492,6 @@ void suprimerUneOpco(String dataString, int opcoToSuppr) {
   }
   dataString =
       dataString.replaceRange(dataString.length - 1, dataString.length, '}');
-  print(dataString);
   resultat = getOpcoLineForData(dataString, resultat);
   data
       .doc('OPCOS')
@@ -509,6 +516,23 @@ void ajouterUneOpco(String dataString, String opcoToAdd, String siteWebOpco,
   sleep(const Duration(seconds: 2));
 }
 
+int nombreOpcoSupprimer(String nomOpco, String dataString) {
+  int resultat = 0;
+  int nom1 = 1;
+  int nom2 = 1;
+  for (int x = 1; x + 1 < dataString.length;) {
+    for (; dataString[x] != ':';) x++;
+    nom2 = x;
+    if (dataString.substring(nom1, nom2) == nomOpco) {
+      return resultat;
+    }
+    resultat++;
+    for (; dataString[x] != ',';) x++;
+    nom1 = x + 2;
+  }
+  return -1;
+}
+
 class ListeOpco extends StatefulWidget {
   @override
   _ListeOpcoState createState() => _ListeOpcoState();
@@ -516,7 +540,9 @@ class ListeOpco extends StatefulWidget {
 
 class _ListeOpcoState extends State<ListeOpco> {
   int error = 0;
+  String nomOpcoSuppr = "";
   int popUpAjoutOpco = 0;
+  int popUpSupprOpco = 0;
   String nomOpco = "";
   String siteWebOpco = "";
   String contactOpco = "";
@@ -681,9 +707,12 @@ class _ListeOpcoState extends State<ListeOpco> {
                                                 primary: Colors.redAccent),
                                             onPressed: () {
                                               setState(() {
-                                                suprimerUneOpco(
-                                                    snapshot.data.toString(),
-                                                    index);
+                                                nomOpcoSuppr = liste[index]
+                                                    .substring(
+                                                        0,
+                                                        liste[index]
+                                                            .indexOf('|'));
+                                                popUpSupprOpco = 1;
                                               });
                                             },
                                             child: Padding(
@@ -707,6 +736,55 @@ class _ListeOpcoState extends State<ListeOpco> {
                     ),
                   ]),
                 ),
+                if (popUpSupprOpco == 1)
+                  BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                    child: Center(
+                      child: Container(
+                        width: 500,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[350],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Voulez-vous supprimez l'opco $nomOpcoSuppr?",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w800)),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          suprimerUneOpco(
+                                              snapshot.data.toString(),
+                                              nombreOpcoSupprimer(nomOpcoSuppr,
+                                                  snapshot.data.toString()));
+                                          popUpSupprOpco = 0;
+                                        });
+                                      },
+                                      child: Text('Oui',
+                                          style: TextStyle(fontSize: 20))),
+                                  TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          popUpSupprOpco = 0;
+                                        });
+                                      },
+                                      child: Text('Non',
+                                          style: TextStyle(fontSize: 20)))
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 if (popUpAjoutOpco == 1)
                   SingleChildScrollView(
                     child: BackdropFilter(
@@ -714,7 +792,7 @@ class _ListeOpcoState extends State<ListeOpco> {
                       child: Center(
                         child: Container(
                             width: 500,
-                            height: 700,
+                            height: 730,
                             decoration: BoxDecoration(
                               color: Colors.grey[350],
                             ),
@@ -830,7 +908,29 @@ class _ListeOpcoState extends State<ListeOpco> {
                                       }
                                     },
                                   ),
-                                )
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 15, bottom: 15),
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.redAccent),
+                                      onPressed: () {
+                                        setState(() {
+                                          popUpAjoutOpco = 0;
+                                        });
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 5, bottom: 5),
+                                        child: Text(
+                                          "Annuler",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      )),
+                                ),
                               ],
                             )),
                       ),
