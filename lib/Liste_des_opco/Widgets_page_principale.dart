@@ -1,4 +1,45 @@
 import 'package:flutter/material.dart';
+import 'Page_ajout_opco.dart';
+
+// ignore: must_be_immutable
+class BouttonAjoutOpco extends StatelessWidget {
+  ValueNotifier<int> change;
+  String nomOpco;
+  String siteWebOpco;
+  String contactOpco;
+  String data;
+
+  BouttonAjoutOpco(
+      this.nomOpco, this.siteWebOpco, this.contactOpco, this.data, this.change);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+          border: Border.all(width: 5, color: Colors.grey),
+          color: Color(0xFF1D2228),
+        ),
+        height: 70,
+        width: 550,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (context) => new PageAjoutOpco(
+                        nomOpco, siteWebOpco, contactOpco, data, change)));
+          },
+          child: Container(
+            color: Colors.white,
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(
+                "Ajouter un opco",
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
+              )
+            ]),
+          ),
+        ));
+  }
+}
 
 class ChargementPageListeOpco extends StatelessWidget {
   @override

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:site_bdd_opco/Liste_des_opco/fonctions_bdd/Fonctions.dart';
 
-void suprimerUneOpco(String dataString, int opcoToSuppr) {
+Future<void> suprimerUneOpco(String dataString, int opcoToSuppr) async {
   Map<String, dynamic> resultat = {};
   CollectionReference data = FirebaseFirestore.instance.collection('Data');
   dataString =
@@ -28,26 +28,27 @@ void suprimerUneOpco(String dataString, int opcoToSuppr) {
   dataString =
       dataString.replaceRange(dataString.length - 1, dataString.length, '}');
   resultat = getOpcoLineForData(dataString, resultat);
-  data
+  return await data
       .doc('OPCOS')
       .set(resultat)
       .then((value) => print("opco suprimée !"))
       .catchError((error) => print("L'ajout de l'opco à échouée !"));
 }
 
-void ajouterUneOpco(String dataString, String opcoToAdd, String siteWebOpco,
-    String contactOpco) async {
+Future<String> ajouterUneOpco(String dataString, String opcoToAdd,
+    String siteWebOpco, String contactOpco) async {
   Map<String, dynamic> resultat = {};
   CollectionReference data = FirebaseFirestore.instance.collection('Data');
   if (dataString.length > 2) {
     resultat = getOpcoLineForData(dataString, resultat);
   }
   resultat[opcoToAdd] = "$siteWebOpco|$contactOpco";
-  data
+  await data
       .doc('OPCOS')
       .set(resultat)
       .then((value) => print("opco ajoutée !"))
       .catchError((error) => print("L'ajout de l'opco à échouée !"));
+  return "";
 }
 
 int nombreOpcoSupprimer(String nomOpco, String dataString) {
