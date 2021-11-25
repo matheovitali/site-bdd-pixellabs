@@ -1,15 +1,12 @@
-// ignore: must_be_immutable
 import 'package:flutter/material.dart';
-
 import 'fonctions_bdd/Ajout_et_suppression.dart';
 
 // ignore: must_be_immutable
 class PageSupprOpco extends StatelessWidget {
   ValueNotifier<int> change;
   String nomOpcoSuppr;
-  String data;
 
-  PageSupprOpco(this.nomOpcoSuppr, this.data, this.change);
+  PageSupprOpco(this.nomOpcoSuppr,this.change);
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +30,7 @@ class PageSupprOpco extends StatelessWidget {
                   children: [
                     TextButton(
                         onPressed: () async {
-                          await suprimerUneOpco(
-                              data, nombreOpcoSupprimer(nomOpcoSuppr, data));
+                          await suprimerUneOpco(nomOpcoSuppr);
                           Navigator.pop(context);
                           change.value++;
                         },

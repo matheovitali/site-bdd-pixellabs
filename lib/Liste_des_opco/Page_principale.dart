@@ -5,20 +5,10 @@ import 'Liste_des_cartes_opco.dart';
 import 'Widgets_page_principale.dart';
 import 'fonctions_bdd/Fonctions.dart';
 
-class ListeOpco extends StatefulWidget {
-  @override
-  _ListeOpcoState createState() => _ListeOpcoState();
-}
-
-class _ListeOpcoState extends State<ListeOpco> {
+// ignore: must_be_immutable
+class ListeOpco extends StatelessWidget {
   var change = ValueNotifier<int>(0);
-  int error = 0;
-  String nomOpcoSuppr = "";
-  int popUpAjoutOpco = 0;
-  int popUpSupprOpco = 0;
-  String nomOpco = "";
-  String siteWebOpco = "";
-  String contactOpco = "";
+  List<String> liste = [];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,7 +19,7 @@ class _ListeOpcoState extends State<ListeOpco> {
               future: getDocumentFromFirestore(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  List<String> liste = listDesOpco(snapshot.data.toString());
+                  liste = snapshot.data as List<String>;
                   return Scaffold(
                     backgroundColor: Color(0xFF1D2228),
                     appBar: AppBar(
@@ -43,19 +33,12 @@ class _ListeOpcoState extends State<ListeOpco> {
                     body: Align(
                       alignment: Alignment.center,
                       child: Column(mainAxisSize: MainAxisSize.max, children: [
-                        RechargePage(change),
-                        BouttonAjoutOpco(nomOpco, siteWebOpco, contactOpco,
-                            snapshot.data.toString(), change),
-                        ListeCarteOpco(
-                            change,
-                            contactOpco,
-                            error,
-                            nomOpco,
-                            nomOpcoSuppr,
-                            siteWebOpco,
-                            liste,
-                            snapshot.data.toString())
-                      ]),
+                          BouttonAjoutOpco(change),
+                          ListeCarteOpco(
+                      change,
+                      liste,
+                          )
+                        ]),
                     ),
                   );
                 } else {
