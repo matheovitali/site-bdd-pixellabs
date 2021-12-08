@@ -6,6 +6,7 @@ import 'package:open_file/open_file.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'Liste_des_conventions/Page_principale.dart';
 import 'Liste_des_opco/Page_principale.dart';
 
 void main() async {
@@ -68,28 +69,26 @@ void extraireData(String dataString, String fileName) async {
   }
 }
 
-
 class AppStart extends StatefulWidget {
   @override
   _AppStartState createState() => _AppStartState();
 }
 
 class _AppStartState extends State<AppStart> {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  Future<FirebaseApp> _initialization = Firebase.initializeApp();
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: _initialization,
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Container();
-          }
           if (snapshot.connectionState == ConnectionState.done) {
             return MyApp();
           }
-          return Scaffold(
-            backgroundColor: Color(0xFF1D2228),
-            body: Text('Chargement'),
+          return MaterialApp(
+            home: Scaffold(
+              backgroundColor: Color(0xFF1D2228),
+              body: Text('Chargement'),
+            ),
           );
         });
   }
@@ -200,7 +199,7 @@ class MyHome extends StatelessWidget {
                     Navigator.push(
                         context,
                         new MaterialPageRoute(
-                            builder: (context) => new ListeOpco()));
+                            builder: (context) => new PageListeOpco()));
                   },
                   child: Container(
                     width: 300,
@@ -220,22 +219,31 @@ class MyHome extends StatelessWidget {
                         border: Border.all(color: Colors.white, width: 1)),
                   ),
                 ),
-                Container(
-                  width: 300,
-                  height: 100,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 35, left: 25),
-                    child: Text(
-                      'Liste des conventions',
-                      style: TextStyle(
-                          color: Color(0xFFFB8122),
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) => new PageListeConvention()));
+                  },
+                  child: Container(
+                    width: 300,
+                    height: 100,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 35, left: 25),
+                      child: Text(
+                        'Liste des conventions',
+                        style: TextStyle(
+                            color: Color(0xFFFB8122),
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
+                    decoration: BoxDecoration(
+                        color: Color(0xFF1D2228),
+                        border: Border.all(color: Colors.white, width: 1)),
                   ),
-                  decoration: BoxDecoration(
-                      color: Color(0xFF1D2228),
-                      border: Border.all(color: Colors.white, width: 1)),
                 ),
                 Container(
                   width: 300,

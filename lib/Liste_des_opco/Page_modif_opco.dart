@@ -1,20 +1,32 @@
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'Fonctions/Ajout_et_suppression.dart';
 
 // ignore: must_be_immutable
-class PageAjoutOpco extends StatelessWidget {
+class PageModifOpco extends StatelessWidget {
+  DocumentSnapshot opco;
   ValueNotifier<int> change;
-  String nomOpco = "";
-  String webOpco = "";
-  String creationOpco = "";
-  String descriptionOpco = "";
-  String nomPrenomOpco = "";
-  String telephoneOpco = "";
-  String emailOpco = "";
+  String nomOpco;
+  String webOpco;
+  String creationOpco;
+  String descriptionOpco;
+  String nomPrenomOpco;
+  String telephoneOpco;
+  String emailOpco;
   var popUp = ValueNotifier<bool>(false);
 
-  PageAjoutOpco(this.change);
+  PageModifOpco(
+      this.change,
+      this.opco,
+      this.nomOpco,
+      this.webOpco,
+      this.creationOpco,
+      this.descriptionOpco,
+      this.nomPrenomOpco,
+      this.telephoneOpco,
+      this.emailOpco);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +51,7 @@ class PageAjoutOpco extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 15),
                                   child: Text(
-                                    "Formulaire d'ajout d'un OPCO",
+                                    "Formulaire de modification d'un OPCO",
                                     style: TextStyle(
                                         fontSize: 30,
                                         fontWeight: FontWeight.w900),
@@ -64,7 +76,8 @@ class PageAjoutOpco extends StatelessWidget {
                                             ),
                                             Container(
                                               width: 300,
-                                              child: TextField(
+                                              child: TextFormField(
+                                                initialValue: nomOpco,
                                                 decoration: InputDecoration(
                                                   focusColor: Colors.black,
                                                   filled: true,
@@ -98,7 +111,9 @@ class PageAjoutOpco extends StatelessWidget {
                                             ),
                                             Container(
                                               width: 700,
-                                              child: TextField(
+                                              child: TextFormField(
+                                                initialValue:
+                                                    opco.get('web').toString(),
                                                 decoration: InputDecoration(
                                                   focusColor: Colors.black,
                                                   filled: true,
@@ -132,7 +147,10 @@ class PageAjoutOpco extends StatelessWidget {
                                             ),
                                             Container(
                                               width: 700,
-                                              child: TextField(
+                                              child: TextFormField(
+                                                initialValue: opco
+                                                    .get('creation')
+                                                    .toString(),
                                                 decoration: InputDecoration(
                                                   focusColor: Colors.black,
                                                   filled: true,
@@ -171,7 +189,10 @@ class PageAjoutOpco extends StatelessWidget {
                                             ),
                                             Container(
                                               width: 700,
-                                              child: TextField(
+                                              child: TextFormField(
+                                                initialValue: opco
+                                                    .get('description')
+                                                    .toString(),
                                                 maxLines: 6,
                                                 decoration: InputDecoration(
                                                   focusColor: Colors.black,
@@ -218,7 +239,10 @@ class PageAjoutOpco extends StatelessWidget {
                                             ),
                                             Container(
                                               width: 300,
-                                              child: TextField(
+                                              child: TextFormField(
+                                                initialValue: opco
+                                                    .get('nom & prenom')
+                                                    .toString(),
                                                 decoration: InputDecoration(
                                                   focusColor: Colors.black,
                                                   filled: true,
@@ -252,7 +276,10 @@ class PageAjoutOpco extends StatelessWidget {
                                             ),
                                             Container(
                                               width: 300,
-                                              child: TextField(
+                                              child: TextFormField(
+                                                initialValue: opco
+                                                    .get('telephone')
+                                                    .toString(),
                                                 decoration: InputDecoration(
                                                   focusColor: Colors.black,
                                                   filled: true,
@@ -286,7 +313,10 @@ class PageAjoutOpco extends StatelessWidget {
                                             ),
                                             Container(
                                               width: 400,
-                                              child: TextField(
+                                              child: TextFormField(
+                                                initialValue: opco
+                                                    .get('e-mail')
+                                                    .toString(),
                                                 decoration: InputDecoration(
                                                   focusColor: Colors.black,
                                                   filled: true,

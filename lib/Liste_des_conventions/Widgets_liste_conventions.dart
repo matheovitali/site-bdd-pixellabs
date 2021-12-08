@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'Page_ajout_opco.dart';
+import 'Page_ajout_convention.dart';
 
 // ignore: must_be_immutable
-class BouttonAjoutOpco extends StatelessWidget {
+class BouttonAjoutConvention extends StatelessWidget {
   ValueNotifier<int> change;
 
-  BouttonAjoutOpco(this.change);
+  BouttonAjoutConvention(this.change);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -22,14 +22,14 @@ class BouttonAjoutOpco extends StatelessWidget {
               Navigator.push(
                   context,
                   new MaterialPageRoute(
-                      builder: (context) => new PageAjoutOpco(change)));
+                      builder: (context) => new PageAjoutConvention(change)));
             },
             child: Container(
               color: Colors.white,
               child:
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(
-                  "Ajouter un opco",
+                  "Ajouter une convention",
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
                 )
               ]),
@@ -39,7 +39,7 @@ class BouttonAjoutOpco extends StatelessWidget {
   }
 }
 
-class ChargementPageListeOpco extends StatelessWidget {
+class ChargementPageListeConventions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +48,7 @@ class ChargementPageListeOpco extends StatelessWidget {
           backgroundColor: Color(0xFF1D2228),
           centerTitle: true,
           title: Text(
-            'Liste des opcos',
+            'Liste des conventions',
             style: TextStyle(fontSize: 30),
           ),
         ),
