@@ -1,5 +1,3 @@
-import 'dart:ui';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'Fonctions/Fonctions.dart';
 import 'Liste_des_cartes_opco.dart';

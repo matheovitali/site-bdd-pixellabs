@@ -6,9 +6,11 @@ import 'Fonctions/Fonctions.dart';
 // ignore: must_be_immutable
 class PageModifConvention extends StatelessWidget {
   int nbrCodeApe = 1;
+  List<String> listeNbrCodeApe = ["1"];
+  String valueNbr = "";
   List<String> listeOpcos = [];
-  List<String> listeApes = [];
   String valueOpco;
+  List<String> listeApes = [];
   String valueApes;
   ValueNotifier<int> change;
   String idcc;
@@ -352,6 +354,23 @@ class PageModifConvention extends StatelessWidget {
                                                                         20),
                                                               ),
                                                             ),
+                                                            DropdownButton<
+                                                                    String>(
+                                                                isExpanded:
+                                                                    true,
+                                                                underline:
+                                                                    SizedBox(),
+                                                                items:
+                                                                    listeNbrCodeApe
+                                                                        .map((item) =>
+                                                                            DropdownMenuItem<
+                                                                                String>(
+                                                                              child: Text(item),
+                                                                              value: item,
+                                                                            ))
+                                                                        .toList(),
+                                                                onChanged:
+                                                                    (text) {}),
                                                             Container(
                                                                 decoration: BoxDecoration(
                                                                     color: Colors
@@ -397,6 +416,9 @@ class PageModifConvention extends StatelessWidget {
                                                                       () {
                                                                     nbrCodeApe +=
                                                                         1;
+                                                                    listeNbrCodeApe
+                                                                        .add(
+                                                                            "$nbrCodeApe");
                                                                     change
                                                                         .value++;
                                                                   },

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:site_bdd_opco/Liste_des_conventions/Fonctions/Fonctions.dart';
@@ -6,9 +5,12 @@ import 'package:site_bdd_opco/Liste_des_opco/Fonctions/Fonctions.dart';
 
 // ignore: must_be_immutable
 class PageAjoutConvention extends StatelessWidget {
+  int nbrCodeApe = 1;
+  static List<String> listeNbrCodeApe = ["1"];
+  String valueNbr = listeNbrCodeApe.first;
   List<String> listeOpcos = [];
-  List<String> listeApes = [];
   String valueOpco = "";
+  List<String> listeApes = [];
   String valueApes = "";
   ValueNotifier<int> change;
   String idcc = "";
@@ -352,6 +354,23 @@ class PageAjoutConvention extends StatelessWidget {
                                                                           20),
                                                                 ),
                                                               ),
+                                                              DropdownButton<
+                                                                      String>(
+                                                                  isExpanded:
+                                                                      true,
+                                                                  underline:
+                                                                      SizedBox(),
+                                                                  items:
+                                                                      listeNbrCodeApe
+                                                                          .map((item) =>
+                                                                              DropdownMenuItem<
+                                                                                  String>(
+                                                                                child: Text(item),
+                                                                                value: item,
+                                                                              ))
+                                                                          .toList(),
+                                                                  onChanged:
+                                                                      (text) {}),
                                                               Container(
                                                                   decoration: BoxDecoration(
                                                                       color: Colors
@@ -386,6 +405,26 @@ class PageAjoutConvention extends StatelessWidget {
                                                                           .value++;
                                                                     },
                                                                   )),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            15),
+                                                                child:
+                                                                    TextButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          nbrCodeApe +=
+                                                                              1;
+                                                                          listeNbrCodeApe
+                                                                              .add("$nbrCodeApe");
+                                                                          change
+                                                                              .value++;
+                                                                        },
+                                                                        child: Text(
+                                                                            "Ajouter un code APE")),
+                                                              )
                                                             ],
                                                           ),
                                                         ),

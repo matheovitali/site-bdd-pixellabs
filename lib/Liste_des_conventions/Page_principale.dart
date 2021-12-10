@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:site_bdd_opco/Liste_des_conventions/Page_modif_convention.dart';
 import 'package:site_bdd_opco/Liste_des_opco/Fonctions/Fonctions.dart';
 import 'Fonctions/Fonctions.dart';
-import 'Page_ajout_convention.dart';
 import 'Widgets_liste_conventions.dart';
 
 List<String> listeRecherche(List<String> liste, String recherche) {
