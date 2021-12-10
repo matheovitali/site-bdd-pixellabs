@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:site_bdd_opco/Liste_des_conventions/Fonctions/Fonctions.dart';
@@ -14,7 +15,6 @@ class PageAjoutConvention extends StatelessWidget {
   String nom = "";
   String creation = "";
   String description = "";
-  String codeApe = "";
   bool popUp = false;
 
   PageAjoutConvention(this.change);
@@ -31,7 +31,8 @@ class PageAjoutConvention extends StatelessWidget {
                 builder: (context, snapshotCodeApe) {
                   if (snapshotCodeApe.connectionState == ConnectionState.done) {
                     listeApes = snapshotCodeApe.data as List<String>;
-                    valueApes = listeApes.first;
+                    listeApes.add("Selectionner un code APE");
+                    valueApes = "Selectionner un code APE";
                     return Scaffold(
                         body: ValueListenableBuilder(
                             valueListenable: change,
@@ -421,13 +422,24 @@ class PageAjoutConvention extends StatelessWidget {
                                                                 true &&
                                                             valueOpco
                                                                 .isNotEmpty) {
-                                                          ajouterUneConvention(
-                                                              idcc,
-                                                              nom,
-                                                              creation,
-                                                              description,
-                                                              valueOpco,
-                                                              codeApe);
+                                                          if (valueApes !=
+                                                              "Selectionner un code APE") {
+                                                            ajouterUneConvention(
+                                                                idcc,
+                                                                nom,
+                                                                creation,
+                                                                description,
+                                                                valueOpco,
+                                                                valueApes);
+                                                          } else {
+                                                            ajouterUneConvention(
+                                                                idcc,
+                                                                nom,
+                                                                creation,
+                                                                description,
+                                                                valueOpco,
+                                                                "");
+                                                          }
                                                           Navigator.pop(
                                                               context);
                                                           change.value++;
@@ -447,7 +459,7 @@ class PageAjoutConvention extends StatelessWidget {
                                                                     .redAccent),
                                                         onPressed: () {
                                                           if (nom.length +
-                                                                  codeApe
+                                                                  valueApes
                                                                       .length +
                                                                   idcc.length +
                                                                   creation

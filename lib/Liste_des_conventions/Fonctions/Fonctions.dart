@@ -1,19 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> suprimerUneConvention(String conventionSuppr) async {
-  CollectionReference data = FirebaseFirestore.instance.collection('Conventions');
+  CollectionReference data =
+      FirebaseFirestore.instance.collection('Conventions');
   await data.doc("$conventionSuppr").delete();
 }
 
 Future<void> ajouterUneConvention(
-    String idcc,
-    String nom,
-    String creation,
-    String description,
-    String opco,
-    String codeApe,
-    ) async {
-  CollectionReference opcos = FirebaseFirestore.instance.collection('Conventions');
+  String idcc,
+  String nom,
+  String creation,
+  String description,
+  String opco,
+  String codeApe,
+) async {
+  CollectionReference opcos =
+      FirebaseFirestore.instance.collection('Conventions');
   await opcos
       .doc('$nom')
       .set({

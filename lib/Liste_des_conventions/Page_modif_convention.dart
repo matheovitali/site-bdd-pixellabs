@@ -5,15 +5,16 @@ import 'Fonctions/Fonctions.dart';
 
 // ignore: must_be_immutable
 class PageModifConvention extends StatelessWidget {
+  int nbrCodeApe = 1;
   List<String> listeOpcos = [];
   List<String> listeApes = [];
   String valueOpco;
   String valueApes;
   ValueNotifier<int> change;
-  String idcc = "";
-  String nom = "";
-  String creation = "";
-  String description = "";
+  String idcc;
+  String nom;
+  String creation;
+  String description;
   bool popUp = false;
 
   PageModifConvention(this.change, this.nom, this.idcc, this.creation,
@@ -29,6 +30,11 @@ class PageModifConvention extends StatelessWidget {
               future: getCodesApeFromFirestore(),
               builder: (context, snapshotApe) {
                 if (snapshotApe.connectionState == ConnectionState.done) {
+                  listeApes = snapshotApe.data as List<String>;
+                  listeApes.add("Selectionner un code APE");
+                  if (valueApes == "") {
+                    valueApes = "Selectionner un code APE";
+                  }
                   return Scaffold(
                       body: ValueListenableBuilder(
                           valueListenable: change,
@@ -43,7 +49,7 @@ class PageModifConvention extends StatelessWidget {
                                     ),
                                     child: Center(
                                       child: Container(
-                                        width: 1060,
+                                        width: 1200,
                                         child: Stack(
                                           children: [
                                             Column(
@@ -381,6 +387,22 @@ class PageModifConvention extends StatelessWidget {
                                                                         .value++;
                                                                   },
                                                                 )),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      left: 15),
+                                                              child: TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    nbrCodeApe +=
+                                                                        1;
+                                                                    change
+                                                                        .value++;
+                                                                  },
+                                                                  child: Text(
+                                                                      "Ajouter un code APE")),
+                                                            )
                                                           ],
                                                         ),
                                                       ),
@@ -411,13 +433,24 @@ class PageModifConvention extends StatelessWidget {
                                                               true &&
                                                           idcc.isNotEmpty ==
                                                               true) {
-                                                        ajouterUneConvention(
-                                                            idcc,
-                                                            nom,
-                                                            creation,
-                                                            description,
-                                                            valueOpco,
-                                                            valueApes);
+                                                        if (valueApes !=
+                                                            "Selectionner un code APE") {
+                                                          ajouterUneConvention(
+                                                              idcc,
+                                                              nom,
+                                                              creation,
+                                                              description,
+                                                              valueOpco,
+                                                              valueApes);
+                                                        } else {
+                                                          ajouterUneConvention(
+                                                              idcc,
+                                                              nom,
+                                                              creation,
+                                                              description,
+                                                              valueOpco,
+                                                              "");
+                                                        }
                                                         Navigator.pop(context);
                                                         change.value++;
                                                       }

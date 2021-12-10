@@ -153,10 +153,10 @@ class PageListeConvention extends StatelessWidget {
                                                                                 change,
                                                                                 liste[index],
                                                                                 convention.get('idcc').toString(),
-                                                                                convention.get('code APE').toString(),
                                                                                 convention.get('creation').toString(),
                                                                                 convention.get('description').toString(),
                                                                                 convention.get('opco').toString(),
+                                                                                convention.get('code APE').toString(),
                                                                               )));
                                                                 },
                                                                 child: Text(
@@ -182,7 +182,7 @@ class PageListeConvention extends StatelessWidget {
                                                                           [
                                                                             PopupMenuItem(
                                                                                 padding: EdgeInsets.only(left: 16),
-                                                                                child: Text("Supprimer l'OPCO ?", style: TextStyle(fontWeight: FontWeight.bold))),
+                                                                                child: Text("Supprimer la convention ?", style: TextStyle(fontWeight: FontWeight.bold))),
                                                                             PopupMenuItem(
                                                                                 padding: EdgeInsets.only(left: 38),
                                                                                 child: ElevatedButton(
