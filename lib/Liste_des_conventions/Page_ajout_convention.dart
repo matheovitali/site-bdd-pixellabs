@@ -11,6 +11,7 @@ class PageAjoutConvention extends StatelessWidget {
   List<String> listeOpcos = [];
   String valueOpco = "";
   List<String> listeApes = [];
+  List<String> listeValueApes = ["Selectionner un code APE"];
   String valueApes = "";
   ValueNotifier<int> change;
   String idcc = "";
@@ -43,13 +44,13 @@ class PageAjoutConvention extends StatelessWidget {
                                 child: SingleChildScrollView(
                                   child: Container(
                                       width: double.maxFinite,
-                                      height: 850,
+                                      height: 860,
                                       decoration: BoxDecoration(
                                         color: Colors.grey[350],
                                       ),
                                       child: Center(
                                         child: Container(
-                                          width: 1060,
+                                          width: 1180,
                                           child: Stack(
                                             children: [
                                               Column(
@@ -344,33 +345,53 @@ class PageAjoutConvention extends StatelessWidget {
                                                             children: [
                                                               Container(
                                                                 width: 300,
-                                                                child: Text(
-                                                                  "Code APE",
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize:
-                                                                          20),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      "Code APE",
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w400,
+                                                                          fontSize:
+                                                                              20),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .only(
+                                                                          left:
+                                                                              10),
+                                                                      child:
+                                                                          Container(
+                                                                        decoration: BoxDecoration(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            border: Border.all(width: 1, color: Colors.black54)),
+                                                                        width:
+                                                                            50,
+                                                                        child: DropdownButton<
+                                                                                String>(
+                                                                            value:
+                                                                                valueNbr,
+                                                                            isExpanded:
+                                                                                true,
+                                                                            underline:
+                                                                                SizedBox(),
+                                                                            items: listeNbrCodeApe
+                                                                                .map((item) => DropdownMenuItem<String>(
+                                                                                      child: Center(child: Text(item)),
+                                                                                      value: item,
+                                                                                    ))
+                                                                                .toList(),
+                                                                            onChanged: (text) {
+                                                                              valueNbr = text as String;
+                                                                              valueApes = listeValueApes[int.parse(valueNbr) - 1];
+                                                                              change.value++;
+                                                                            }),
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
-                                                              DropdownButton<
-                                                                      String>(
-                                                                  isExpanded:
-                                                                      true,
-                                                                  underline:
-                                                                      SizedBox(),
-                                                                  items:
-                                                                      listeNbrCodeApe
-                                                                          .map((item) =>
-                                                                              DropdownMenuItem<
-                                                                                  String>(
-                                                                                child: Text(item),
-                                                                                value: item,
-                                                                              ))
-                                                                          .toList(),
-                                                                  onChanged:
-                                                                      (text) {}),
                                                               Container(
                                                                   decoration: BoxDecoration(
                                                                       color: Colors
@@ -398,9 +419,12 @@ class PageAjoutConvention extends StatelessWidget {
                                                                         .toList(),
                                                                     onChanged:
                                                                         (text) {
+                                                                      listeValueApes[
+                                                                          int.parse(valueNbr) -
+                                                                              1] = text
+                                                                          as String;
                                                                       valueApes =
-                                                                          text
-                                                                              as String;
+                                                                          text;
                                                                       change
                                                                           .value++;
                                                                     },
@@ -411,7 +435,8 @@ class PageAjoutConvention extends StatelessWidget {
                                                                             .only(
                                                                         left:
                                                                             15),
-                                                                child:
+                                                                child: Column(
+                                                                  children: [
                                                                     TextButton(
                                                                         onPressed:
                                                                             () {
@@ -419,11 +444,34 @@ class PageAjoutConvention extends StatelessWidget {
                                                                               1;
                                                                           listeNbrCodeApe
                                                                               .add("$nbrCodeApe");
+                                                                          listeValueApes
+                                                                              .add("Selectionner un code APE");
                                                                           change
                                                                               .value++;
                                                                         },
                                                                         child: Text(
                                                                             "Ajouter un code APE")),
+                                                                    TextButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          if (int.parse(valueNbr) !=
+                                                                              1) {
+                                                                            if (valueNbr ==
+                                                                                listeNbrCodeApe.last) {
+                                                                              valueNbr = listeNbrCodeApe[listeNbrCodeApe.length - 2];
+                                                                              valueApes = listeValueApes[int.parse(valueNbr) - 1];
+                                                                            }
+                                                                            listeNbrCodeApe.removeLast();
+                                                                            listeValueApes.removeLast();
+                                                                            nbrCodeApe -=
+                                                                                1;
+                                                                            change.value++;
+                                                                          }
+                                                                        },
+                                                                        child: Text(
+                                                                            "Supprimer un code APE")),
+                                                                  ],
+                                                                ),
                                                               )
                                                             ],
                                                           ),
@@ -461,24 +509,14 @@ class PageAjoutConvention extends StatelessWidget {
                                                                 true &&
                                                             valueOpco
                                                                 .isNotEmpty) {
-                                                          if (valueApes !=
-                                                              "Selectionner un code APE") {
-                                                            ajouterUneConvention(
-                                                                idcc,
-                                                                nom,
-                                                                creation,
-                                                                description,
-                                                                valueOpco,
-                                                                valueApes);
-                                                          } else {
-                                                            ajouterUneConvention(
-                                                                idcc,
-                                                                nom,
-                                                                creation,
-                                                                description,
-                                                                valueOpco,
-                                                                "");
-                                                          }
+                                                          ajouterUneConvention(
+                                                              idcc,
+                                                              nom,
+                                                              creation,
+                                                              description,
+                                                              valueOpco,
+                                                              listeValueApes);
+
                                                           Navigator.pop(
                                                               context);
                                                           change.value++;

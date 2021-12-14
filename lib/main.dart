@@ -5,6 +5,7 @@ import 'package:open_file/open_file.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'Liste_des_codes_ape/Page_principale.dart';
 import 'Liste_des_conventions/Page_principale.dart';
 import 'Liste_des_opco/Page_principale.dart';
 
@@ -244,22 +245,31 @@ class MyHome extends StatelessWidget {
                         border: Border.all(color: Colors.white, width: 1)),
                   ),
                 ),
-                Container(
-                  width: 300,
-                  height: 100,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 35, left: 30),
-                    child: Text(
-                      'Liste des codes ape',
-                      style: TextStyle(
-                          color: Color(0xFFFB8122),
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) => new PageListeCodeAPE()));
+                  },
+                  child: Container(
+                    width: 300,
+                    height: 100,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 35, left: 30),
+                      child: Text(
+                        'Liste des codes ape',
+                        style: TextStyle(
+                            color: Color(0xFFFB8122),
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
+                    decoration: BoxDecoration(
+                        color: Color(0xFF1D2228),
+                        border: Border.all(color: Colors.white, width: 1)),
                   ),
-                  decoration: BoxDecoration(
-                      color: Color(0xFF1D2228),
-                      border: Border.all(color: Colors.white, width: 1)),
                 ),
               ],
             )));

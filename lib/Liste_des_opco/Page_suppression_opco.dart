@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'Fonctions/Ajout_et_suppression.dart';
+import 'Fonctions/Fonctions.dart';
 
 // ignore: must_be_immutable
 class PageSupprOpco extends StatelessWidget {

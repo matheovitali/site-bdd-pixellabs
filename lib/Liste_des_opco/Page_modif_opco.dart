@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'Fonctions/Ajout_et_suppression.dart';
+import 'Fonctions/Fonctions.dart';
 
 // ignore: must_be_immutable
 class PageModifOpco extends StatelessWidget {

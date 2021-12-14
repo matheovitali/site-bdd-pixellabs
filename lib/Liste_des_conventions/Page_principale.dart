@@ -1,16 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:site_bdd_opco/Liste_des_conventions/Page_modif_convention.dart';
-import 'package:site_bdd_opco/Liste_des_opco/Fonctions/Fonctions.dart';
 import 'Fonctions/Fonctions.dart';
 import 'Widgets_liste_conventions.dart';
 
-List<String> listeRecherche(List<String> liste, String recherche) {
+List<String> listeRecherche(
+    List<String> liste, List<String> listeIdcc, String recherche) {
   List<String> afterSearch = [];
   for (int i = 0; i < liste.length; i++) {
-    if (liste[i].contains(recherche) == true) {
+    if (liste[i].contains(recherche) == true ||
+        listeIdcc[i].contains(recherche) == true) {
       afterSearch.add(liste[i]);
+      afterSearch.add(listeIdcc[i]);
     }
+  }
+  return afterSearch;
+}
+
+List<String> triNomRecherche(List<String> liste) {
+  List<String> afterSearch = [];
+  for (int i = 0; i < liste.length; i += 2) {
+    afterSearch.add(liste[i]);
+  }
+  return afterSearch;
+}
+
+List<String> triIdccRecherche(List<String> liste) {
+  List<String> afterSearch = [];
+  for (int i = 1; i < liste.length; i += 2) {
+    afterSearch.add(liste[i]);
   }
   return afterSearch;
 }
@@ -18,6 +36,7 @@ List<String> listeRecherche(List<String> liste, String recherche) {
 // ignore: must_be_immutable
 class PageListeConvention extends StatelessWidget {
   var change = ValueNotifier<int>(0);
+  List<String> preListe = [];
   List<String> liste = [];
   List<String> listeIdcc = [];
   String recherche = "";
@@ -36,15 +55,18 @@ class PageListeConvention extends StatelessWidget {
               }
               if (snapshot.connectionState == ConnectionState.done) {
                 liste = snapshot.data as List<String>;
-                if (recherche.length > 0) {
-                  liste = listeRecherche(liste, recherche);
-                }
                 return FutureBuilder(
                     future: getIdccFromFirestore(liste),
                     builder: (context, snapshotIdcc) {
                       if (snapshotIdcc.connectionState ==
                           ConnectionState.done) {
                         listeIdcc = snapshotIdcc.data as List<String>;
+                        if (recherche.length > 0) {
+                          preListe =
+                              listeRecherche(liste, listeIdcc, recherche);
+                          liste = triNomRecherche(preListe);
+                          listeIdcc = triIdccRecherche(preListe);
+                        }
                         return Scaffold(
                             backgroundColor: Color(0xFF1D2228),
                             appBar: AppBar(

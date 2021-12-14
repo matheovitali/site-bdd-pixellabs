@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'Fonctions/Ajout_et_suppression.dart';
+import 'Fonctions/Fonctions.dart';
 import 'Page_modif_opco.dart';
 
 // ignore: must_be_immutable
