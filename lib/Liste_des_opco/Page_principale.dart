@@ -71,7 +71,7 @@ class PageListeOpco extends StatelessWidget {
                                         },
                                       )),
                                 ),
-                                BouttonAjoutOpco(change)
+                                BoutonAjoutOpco(change)
                               ]),
                         ),
                         ListeCarteOpco(

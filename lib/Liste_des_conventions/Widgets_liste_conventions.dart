@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'Page_ajout_convention.dart';
 
 // ignore: must_be_immutable
-class BouttonAjoutConvention extends StatelessWidget {
+class BoutonAjoutConvention extends StatelessWidget {
   ValueNotifier<int> change;
 
-  BouttonAjoutConvention(this.change);
+  BoutonAjoutConvention(this.change);
   @override
   Widget build(BuildContext context) {
     return Padding(

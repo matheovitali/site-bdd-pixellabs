@@ -4,35 +4,6 @@ import 'package:site_bdd_opco/Liste_des_conventions/Page_modif_convention.dart';
 import 'Fonctions/Fonctions.dart';
 import 'Widgets_liste_conventions.dart';
 
-List<String> listeRecherche(
-    List<String> liste, List<String> listeIdcc, String recherche) {
-  List<String> afterSearch = [];
-  for (int i = 0; i < liste.length; i++) {
-    if (liste[i].contains(recherche) == true ||
-        listeIdcc[i].contains(recherche) == true) {
-      afterSearch.add(liste[i]);
-      afterSearch.add(listeIdcc[i]);
-    }
-  }
-  return afterSearch;
-}
-
-List<String> triNomRecherche(List<String> liste) {
-  List<String> afterSearch = [];
-  for (int i = 0; i < liste.length; i += 2) {
-    afterSearch.add(liste[i]);
-  }
-  return afterSearch;
-}
-
-List<String> triIdccRecherche(List<String> liste) {
-  List<String> afterSearch = [];
-  for (int i = 1; i < liste.length; i += 2) {
-    afterSearch.add(liste[i]);
-  }
-  return afterSearch;
-}
-
 // ignore: must_be_immutable
 class PageListeConvention extends StatelessWidget {
   var change = ValueNotifier<int>(0);
@@ -102,7 +73,7 @@ class PageListeConvention extends StatelessWidget {
                                                   },
                                                 )),
                                           ),
-                                          BouttonAjoutConvention(change)
+                                          BoutonAjoutConvention(change)
                                         ]),
                                   ),
                                   Expanded(
@@ -202,10 +173,10 @@ class PageListeConvention extends StatelessWidget {
                                                                       (context) =>
                                                                           [
                                                                             PopupMenuItem(
-                                                                                padding: EdgeInsets.only(left: 16),
+                                                                                padding: EdgeInsets.only(left: 18),
                                                                                 child: Text("Supprimer la convention ?", style: TextStyle(fontWeight: FontWeight.bold))),
                                                                             PopupMenuItem(
-                                                                                padding: EdgeInsets.only(left: 38),
+                                                                                padding: EdgeInsets.only(left: 65),
                                                                                 child: ElevatedButton(
                                                                                   child: Text('Confirmer', style: TextStyle(fontWeight: FontWeight.bold)),
                                                                                   onPressed: () async {

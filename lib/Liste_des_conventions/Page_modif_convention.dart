@@ -57,7 +57,7 @@ class PageModifConvention extends StatelessWidget {
                               child: SingleChildScrollView(
                                 child: Container(
                                     width: double.maxFinite,
-                                    height: 850,
+                                    height: 860,
                                     decoration: BoxDecoration(
                                       color: Colors.grey[350],
                                     ),
@@ -363,7 +363,7 @@ class PageModifConvention extends StatelessWidget {
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
-                                                                                .bold,
+                                                                                .w400,
                                                                         fontSize:
                                                                             20),
                                                                   ),

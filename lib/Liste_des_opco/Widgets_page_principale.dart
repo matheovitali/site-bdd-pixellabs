@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'Page_ajout_opco.dart';
 
 // ignore: must_be_immutable
-class BouttonAjoutOpco extends StatelessWidget {
+class BoutonAjoutOpco extends StatelessWidget {
   ValueNotifier<int> change;
 
-  BouttonAjoutOpco(this.change);
+  BoutonAjoutOpco(this.change);
   @override
   Widget build(BuildContext context) {
     return Padding(
