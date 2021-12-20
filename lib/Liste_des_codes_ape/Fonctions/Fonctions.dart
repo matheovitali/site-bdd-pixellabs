@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> suprimerUnCodeAPE(String conventionSuppr) async {
-  CollectionReference data =
-      FirebaseFirestore.instance.collection('Codes APE');
+  CollectionReference data = FirebaseFirestore.instance.collection('Codes APE');
   await data.doc("$conventionSuppr").delete();
 }
 
@@ -67,6 +66,7 @@ Future<List<String>> getCodesApeFromFirestore() async {
 }
 
 Future<List<String>> getActiviteFromFirestore(List<String> liste) async {
+  print(liste);
   List<String> names = [];
   for (int i = 0; i < liste.length; i++) {
     DocumentSnapshot query = await FirebaseFirestore.instance

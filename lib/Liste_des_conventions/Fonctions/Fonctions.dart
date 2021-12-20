@@ -46,21 +46,35 @@ Future<void> suprimerUneConvention(String conventionSuppr) async {
       FirebaseFirestore.instance.collection('Codes APE');
   QuerySnapshot query =
       await FirebaseFirestore.instance.collection('Codes APE').get();
+  int done = 0;
   List<String> liste = [];
   query.docs.forEach((doc) {
     liste.add(doc.id);
   });
-  for (int i = 0; liste.length < i; i++) {
+  print(conventionSuppr);
+  for (int i = 0; i < liste.length; i++) {
     DocumentSnapshot doc = await dataAPE.doc(liste[i]).get();
     String search = doc.get("Conventions");
     int y = 1;
-    for (int x = 1; x < search.length; x++) {
+    for (int x = 1; x < search.length || done == 1; x++) {
+      done = 0;
       if (search[x] == "," || search[x] == "}") {
+        print("pre$x|$y");
+        print("||${search.substring(y, x)}||$conventionSuppr||");
         if (search.substring(y, x) == conventionSuppr) {
-          search.replaceRange(y, x, "");
+          print("c'est bon");
+          print("post$x|$y");
+          search = search.replaceRange(y, x + 2, "");
+          print("oof");
+          done = 1;
+          x = y + 2;
+        } else {
+          y = x + 2;
         }
       }
     }
+    print(search);
+    await dataAPE.doc(liste[i]).update({'Conventions': "$search"});
   }
   await dataConvention.doc("$conventionSuppr").delete();
 }
