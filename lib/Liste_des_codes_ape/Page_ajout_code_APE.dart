@@ -432,7 +432,7 @@ class PageAjoutCodeAPE extends StatelessWidget {
                                                       activite,
                                                       domaine,
                                                       description,
-                                                      listeConvention);
+                                                      listeValueConvention);
 
                                                   Navigator.pop(context);
                                                   change.value++;

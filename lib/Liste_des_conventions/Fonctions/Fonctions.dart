@@ -46,34 +46,34 @@ Future<void> suprimerUneConvention(String conventionSuppr) async {
       FirebaseFirestore.instance.collection('Codes APE');
   QuerySnapshot query =
       await FirebaseFirestore.instance.collection('Codes APE').get();
-  int done = 0;
   List<String> liste = [];
   query.docs.forEach((doc) {
     liste.add(doc.id);
   });
-  print(conventionSuppr);
   for (int i = 0; i < liste.length; i++) {
     DocumentSnapshot doc = await dataAPE.doc(liste[i]).get();
     String search = doc.get("Conventions");
     int y = 1;
-    for (int x = 1; x < search.length || done == 1; x++) {
-      done = 0;
+    int done = 0;
+    for (int x = 1; x < search.length && done == 0; x++) {
       if (search[x] == "," || search[x] == "}") {
-        print("pre$x|$y");
-        print("||${search.substring(y, x)}||$conventionSuppr||");
         if (search.substring(y, x) == conventionSuppr) {
-          print("c'est bon");
-          print("post$x|$y");
-          search = search.replaceRange(y, x + 2, "");
-          print("oof");
+          if (search[x] == ",") {
+            search = search.replaceRange(y, x + 2, "");
+          } else if (y - 2 >= 0) {
+            search = search.replaceRange(y - 2, x, "");
+          } else {
+            search = search.replaceRange(y, x, "");
+          }
           done = 1;
-          x = y + 2;
         } else {
           y = x + 2;
         }
       }
     }
-    print(search);
+    if (search.length == 2) {
+      search = search.replaceRange(0, 1, "{Selectionner une Convention");
+    }
     await dataAPE.doc(liste[i]).update({'Conventions': "$search"});
   }
   await dataConvention.doc("$conventionSuppr").delete();

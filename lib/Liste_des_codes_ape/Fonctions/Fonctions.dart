@@ -1,8 +1,43 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-Future<void> suprimerUnCodeAPE(String conventionSuppr) async {
-  CollectionReference data = FirebaseFirestore.instance.collection('Codes APE');
-  await data.doc("$conventionSuppr").delete();
+Future<void> suprimerUnCodeAPE(String apeSuppr) async {
+  CollectionReference dataAPE =
+      FirebaseFirestore.instance.collection('Codes APE');
+  CollectionReference dataConvention =
+      FirebaseFirestore.instance.collection('Conventions');
+  QuerySnapshot query =
+      await FirebaseFirestore.instance.collection('Conventions').get();
+  List<String> liste = [];
+  query.docs.forEach((doc) {
+    liste.add(doc.id);
+  });
+  for (int i = 0; i < liste.length; i++) {
+    DocumentSnapshot doc = await dataConvention.doc(liste[i]).get();
+    String search = doc.get("code APE");
+    int y = 1;
+    int done = 0;
+    for (int x = 1; x < search.length && done == 0; x++) {
+      if (search[x] == "," || search[x] == "}") {
+        if (search.substring(y, x) == apeSuppr) {
+          if (search[x] == ",") {
+            search = search.replaceRange(y, x + 2, "");
+          } else if (y - 2 >= 0) {
+            search = search.replaceRange(y - 2, x, "");
+          } else {
+            search = search.replaceRange(y, x, "");
+          }
+          done = 1;
+        } else {
+          y = x + 2;
+        }
+      }
+    }
+    if (search.length == 2) {
+      search = search.replaceRange(0, 1, "{Selectionner un code APE");
+    }
+    await dataConvention.doc(liste[i]).update({'code APE': "$search"});
+  }
+  await dataAPE.doc("$apeSuppr").delete();
 }
 
 Future<void> ajouterUnCodeAPE(
@@ -66,7 +101,6 @@ Future<List<String>> getCodesApeFromFirestore() async {
 }
 
 Future<List<String>> getActiviteFromFirestore(List<String> liste) async {
-  print(liste);
   List<String> names = [];
   for (int i = 0; i < liste.length; i++) {
     DocumentSnapshot query = await FirebaseFirestore.instance
